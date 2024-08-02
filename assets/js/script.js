@@ -31,10 +31,9 @@ function createTaskCard(task) {
 
 // Todo: create a function to render the task list and make cards draggable
 function renderTaskList() {
-    function renderTaskList(tasks) {
         const tasksContainer = document.getElementById('tasks-container');
         tasksContainer.innerHTML = ''; // Clear existing content
-    
+
         tasks.forEach(task => {
             const taskCard = createTaskCard(task); // Assume you have a createTaskCard function
             tasksContainer.appendChild(taskCard);
@@ -44,13 +43,13 @@ function renderTaskList() {
             const taskCard = document.createElement('div');
             taskCard.classList.add('task-card');
             taskCard.draggable = true; // Make the task card draggable
-        
+
             taskCard.innerHTML = `
                 <h3>${task.title}</h3>
                 <p>${task.description}</p>
                 <!-- Add other task details as needed -->
             `;
-        
+
             // Add event listeners for drag events
             taskCard.addEventListener('dragstart', (event) => {
                 event.dataTransfer.setData('text/plain', task.id);
@@ -58,17 +57,17 @@ function renderTaskList() {
             tasksContainer.addEventListener('dragover', (event) => {
                 event.preventDefault();
             });
-            
+
             tasksContainer.addEventListener('drop', (event) => {
                 event.preventDefault();
                 const taskId = event.dataTransfer.getData('text/plain');
                 const draggedTask = document.getElementById(taskId);
                 tasksContainer.appendChild(draggedTask);
             });
-        
+
             return taskCard;
         }
-    }
+    
 
 }
 
@@ -89,5 +88,9 @@ function handleDrop(event, ui) {
 
 // Todo: when the page loads, render the task list, add event listeners, make lanes droppable, and make the due date field a date picker
 $(document).ready(function () {
+    $('#taskDueDate').datepicker({
+        changeMonth: true,
+        changeYear: true,
+    });
 
 });
