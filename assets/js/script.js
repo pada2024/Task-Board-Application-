@@ -105,31 +105,19 @@ function handleAddTask(event) {
 
 // Todo: create a function to handle deleting a task
 function handleDeleteTask(event) {
-  // Get the task ID from the event (assuming it's stored in a data attribute)
-  const taskId = event.target.dataset.taskId;
+  // Get the task ID from the button's data attribute
+  const taskId = event.target.getAttribute('data-task-id');
 
-  // Make a DELETE request to the API
-  fetch(`/api/tasks/${taskId}`, {
-      method: 'DELETE',
-  })
-  .then(response => {
-      if (!response.ok) {
-          throw new Error('Network response was not ok');
-      }
-      return response.json();
-  })
-  .then(data => {
-      // Remove the task from the UI
-      const taskElement = document.querySelector(`[data-task-id="${taskId}"]`);
-      if (taskElement) {
-          taskElement.remove();
-      }
-  })
-  .catch(error => {
-      console.error('There was a problem with the fetch operation:', error);
-  });
+  // Optionally, remove the task from your data source here
+  // For example, if you have an array of tasks, you could filter it:
+  // tasks = tasks.filter(task => task.id !== taskId);
+
+  // Find the task card element and remove it from the DOM
+  const taskCard = document.querySelector(`[data-task-id="${taskId}"]`);
+  if (taskCard) {
+      taskCard.remove();
+  }
 }
-  
 
 
 // Todo: create a function to handle dropping a task into a new status lane
