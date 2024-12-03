@@ -27,6 +27,21 @@ function createTaskCard(task) {
   taskCard.classList.add('draggable');
   taskCard.setAttribute("data-task-id", task.id)
 
+  // Check the deadline and set the background color
+  const currentDate = new Date();
+  const deadlineDate = new Date(task.deadline); 
+  const timeDifference = deadlineDate - currentDate; // Difference in milliseconds
+
+// Set color based on deadline status
+if (timeDifference < 0) {
+  // Overdue
+  taskCard.style.backgroundColor = 'red';
+} else if (timeDifference < 2 * 24 * 60 * 60 * 1000) { // 2 days in milliseconds
+  // Nearing deadline (within 2 days)
+  taskCard.style.backgroundColor = 'yellow';
+}
+
+
   // Set the task card content
   taskCard.innerHTML = `
     <h3>${task.title}</h3>
@@ -67,13 +82,12 @@ function renderTaskList() {
   $('.draggable').draggable({
     opacity: 0.7,
     zIndex: 100,
-    // ? This is the function that creates the clone of the card that is dragged. This is purely visual and does not affect the data.
+    // This is the function that creates the clone of the card that is dragged. This is purely visual and does not affect the data.
     helper: function (e) {
-      // ? Check if the target of the drag event is the card itself or a child element. If it is the card itself, clone it, otherwise find the parent card  that is draggable and clone that.
       const original = $(e.target).hasClass('ui-draggable')
         ? $(e.target)
         : $(e.target).closest('.ui-draggable');
-      // ? Return the clone with the width set to the width of the original card. This is so the clone does not take up the entire width of the lane. This is to also fix a visual bug where the card shrinks as it's dragged to the right.
+      // Return the clone with the width set to the width of the original card. 
       return original.clone().css({
         width: original.outerWidth(),
       });
@@ -92,7 +106,7 @@ function handleAddTask(event) {
   const data = {
     id: generateRandomId(),
     title,
-    date,
+    deadline: date,
     description,
     status: "to-do"
   }
@@ -108,10 +122,7 @@ function handleDeleteTask(event) {
   // Get the task ID from the button's data attribute
   const taskId = event.target.getAttribute('data-task-id');
 
-  // Optionally, remove the task from your data source here
-  // For example, if you have an array of tasks, you could filter it:
-  // tasks = tasks.filter(task => task.id !== taskId);
-
+  
   // Find the task card element and remove it from the DOM
   const taskCard = document.querySelector(`[data-task-id="${taskId}"]`);
   if (taskCard) {
