@@ -31,6 +31,7 @@ function createTaskCard(task) {
   taskCard.innerHTML = `
     <h3>${task.title}</h3>
     <p>${task.description}</p>
+    <button class="btn btn-danger" onclick="handleDeleteTask(event)" data-task-id="${task.id}">Delete</button>
     <!-- Add other task details as needed -->
 `;
   // Return the created task card element
@@ -49,17 +50,17 @@ function renderTaskList() {
   const tasks = JSON.parse(localStorage.getItem("newTask")) || []
   tasks.forEach(task => {
     const taskCard = createTaskCard(task);
-    if (task.status == "to-do"){
+    if (task.status == "to-do") {
       todoContainer.appendChild(taskCard);
-      
+
     }
-    if (task.status == "in-progress"){
+    if (task.status == "in-progress") {
       inProgressContainer.appendChild(taskCard);
-      
+
     }
-    if (task.status == "done"){
+    if (task.status == "done") {
       doneContainer.appendChild(taskCard);
-      
+
     }
 
   });
@@ -104,8 +105,32 @@ function handleAddTask(event) {
 
 // Todo: create a function to handle deleting a task
 function handleDeleteTask(event) {
+  // Get the task ID from the event (assuming it's stored in a data attribute)
+  const taskId = event.target.dataset.taskId;
 
+  // Make a DELETE request to the API
+  fetch(`/api/tasks/${taskId}`, {
+      method: 'DELETE',
+  })
+  .then(response => {
+      if (!response.ok) {
+          throw new Error('Network response was not ok');
+      }
+      return response.json();
+  })
+  .then(data => {
+      // Remove the task from the UI
+      const taskElement = document.querySelector(`[data-task-id="${taskId}"]`);
+      if (taskElement) {
+          taskElement.remove();
+      }
+  })
+  .catch(error => {
+      console.error('There was a problem with the fetch operation:', error);
+  });
 }
+  
+
 
 // Todo: create a function to handle dropping a task into a new status lane
 function handleDrop(event, ui) {
@@ -141,3 +166,19 @@ $(document).ready(function () {
   taskForm.addEventListener("submit", handleAddTask)
   renderTaskList()
 });
+
+
+
+// // const taskId = $(this).attr('data-project-id');
+//   const tasks = readProjectsFromStorage();
+
+//   projects.forEach((task) => {
+//     if (task.id === taskId) {
+//       tasks.splice(tasks.indexOf(task), 1);
+//     }
+//   });
+
+
+// saveProjectsToStorage(projects);
+
+// printProjectData();
